@@ -243,20 +243,22 @@
         const dark = isDarkMode();
         return {
             dark: dark,
-            bg: dark ? '#1a1a2e' : '#ffffff',
-            bgSecondary: dark ? '#16213e' : '#f7f8fa',
-            text: dark ? '#e0e0e0' : '#333333',
-            textSecondary: dark ? '#a0a0a0' : '#666666',
-            border: dark ? '#30363d' : '#e0e0e0',
-            accent: '#6366f1',
-            accentHover: '#5558e6',
-            btnBg: dark ? '#2d2d44' : '#e8ecf1',
-            btnBgHover: dark ? '#3d3d5c' : '#d8dce2',
-            codeBg: dark ? '#0d1117' : '#f0f2f5',
-            errorBg: dark ? '#3d1f1f' : '#fef2f2',
-            errorText: dark ? '#fca5a5' : '#dc2626',
-            successBg: dark ? '#1f3d1f' : '#f0fdf4',
-            successText: dark ? '#86efac' : '#16a34a',
+            // Match LeetCode's actual color scheme
+            bg:            dark ? '#282828' : '#ffffff',
+            bgSecondary:  dark ? '#323232' : '#f7f8fa',
+            text:          dark ? '#eff2f699' : '#262626bf',
+            textPrimary:   dark ? '#eff2f6' : '#262626',
+            textSecondary: dark ? '#ffffff80' : '#8c8c8c',
+            border:        dark ? '#ffffff1f' : '#e5e5e5',
+            accent:        '#ffa116',
+            accentHover:   '#ff9d0a',
+            btnBg:         dark ? '#ffffff1f' : '#00000008',
+            btnBgHover:    dark ? '#ffffff33' : '#00000014',
+            codeBg:        dark ? '#1e1e1e' : '#00000008',
+            errorBg:       dark ? '#ffffff1f' : '#fef2f2',
+            errorText:     dark ? '#ef4743' : '#dc2626',
+            successBg:     dark ? '#ffffff1f' : '#f0fdf4',
+            successText:   dark ? '#2cbb5d' : '#16a34a',
         };
     }
 
