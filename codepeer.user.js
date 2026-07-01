@@ -72,7 +72,7 @@
         },
         {
             id: 'custom',
-            label: 'Custom',
+            label: '自定义',
             baseUrl: '',
             defaultModel: '',
             apiKeyPlaceholder: 'sk-...',
@@ -147,7 +147,7 @@
 
     async function callAI(messages, onDelta, onError) {
         if (!config.apiKey.trim()) {
-            onError('Please set your API Key in settings.');
+            onError('请先在设置中填写 API 密钥。');
             return '';
         }
 
@@ -317,28 +317,28 @@
                     <button id="codepeer-close">&times;</button>
                 </div>
                 <div id="codepeer-actions">
-                    <button data-prompt="analyze">Analyze Code</button>
-                    <button data-prompt="optimize">Optimize</button>
-                    <button data-prompt="explain">Explain Logic</button>
+                    <button data-prompt="analyze">分析代码</button>
+                    <button data-prompt="optimize">优化建议</button>
+                    <button data-prompt="explain">解释思路</button>
                 </div>
                 <div id="codepeer-output"></div>
                 <div id="codepeer-settings">
                     <details>
-                        <summary>Settings</summary>
+                        <summary>设置</summary>
                         <div id="codepeer-settings-body">
-                            <label>Provider</label>
+                            <label>模型厂商</label>
                             <select id="codepeer-provider"></select>
-                            <label>API Key</label>
+                            <label>API 密钥</label>
                             <div class="codepeer-key-row">
                                 <input type="password" id="codepeer-apikey" placeholder="sk-..." />
-                                <button id="codepeer-toggle-key" title="Show/hide">&#x1f441;</button>
+                                <button id="codepeer-toggle-key" title="显示/隐藏">&#x1f441;</button>
                             </div>
-                            <label>Model</label>
+                            <label>模型</label>
                             <select id="codepeer-model"></select>
-                            <label>Base URL</label>
+                            <label>接口地址</label>
                             <input type="text" id="codepeer-baseurl" placeholder="https://api.deepseek.com" />
                             <div id="codepeer-settings-note"></div>
-                            <button id="codepeer-save-settings">Save</button>
+                            <button id="codepeer-save-settings">保存</button>
                         </div>
                     </details>
                 </div>
@@ -482,7 +482,7 @@
             baseUrlInput: container.querySelector('#codepeer-baseurl'),
             toggleKeyBtn: container.querySelector('#codepeer-toggle-key'),
             settingsNote: container.querySelector('#codepeer-settings-note'),
-            saveSettingsBtn: container.querySelector('#codepeer-save-settings'),
+            save设置Btn: container.querySelector('#codepeer-save-settings'),
         };
     }
 
@@ -535,7 +535,7 @@
         if (p.models.length === 0) {
             const opt = document.createElement('option');
             opt.value = config.model || '';
-            opt.textContent = config.model || 'Custom model';
+            opt.textContent = config.model || '自定义模型';
             select.appendChild(opt);
         } else {
             p.models.forEach(m => {
@@ -548,7 +548,7 @@
         select.value = config.model || p.defaultModel;
     }
 
-    function refreshSettingsUI(elements) {
+    function refresh设置UI(elements) {
         populateProviderSelect(elements.providerSelect);
         onProviderChange(elements);
 
@@ -575,7 +575,7 @@
 
         if (providerId === 'custom') {
             elements.modelSelect.style.display = 'none';
-            elements.settingsNote.textContent = 'Enter your custom endpoint, model, and API key.';
+            elements.settingsNote.textContent = '请填写自定义接口地址、模型名称和 API 密钥。';
         } else {
             elements.modelSelect.style.display = '';
             elements.settingsNote.textContent = '';
@@ -595,8 +595,8 @@
             elements.container.classList.remove('open');
         });
 
-        // --- Settings ---
-        refreshSettingsUI(elements);
+        // --- 设置 ---
+        refresh设置UI(elements);
 
         elements.providerSelect.addEventListener('change', () => onProviderChange(elements));
         elements.toggleKeyBtn.addEventListener('click', () => {
@@ -604,7 +604,7 @@
             input.type = input.type === 'password' ? 'text' : 'password';
         });
 
-        elements.saveSettingsBtn.addEventListener('click', () => {
+        elements.save设置Btn.addEventListener('click', () => {
             const providerId = elements.providerSelect.value;
             config.provider = providerId;
             config.apiKey = elements.apiKeyInput.value.trim();
@@ -613,7 +613,7 @@
                 ? config.model
                 : elements.modelSelect.value;
             saveConfig(config);
-            elements.settingsNote.textContent = 'Saved.';
+            elements.settingsNote.textContent = '已保存。';
             elements.settingsNote.style.color = getThemeColors().successText;
             setTimeout(() => {
                 elements.settingsNote.textContent = '';
@@ -630,7 +630,7 @@
                 if (!promptType || loadingSet.has(promptType)) return;
 
                 if (!config.apiKey.trim()) {
-                    elements.output.innerHTML = '<div class="codepeer-error">Please open Settings and enter your API Key first.</div>';
+                    elements.output.innerHTML = '<div class="codepeer-error">请先在设置中填写 API 密钥。</div>';
                     return;
                 }
 
@@ -638,14 +638,14 @@
                 const code = getMonacoCode();
 
                 if (!problemDesc && !code) {
-                    elements.output.innerHTML = '<div class="codepeer-error">No problem description or code found on this page.</div>';
+                    elements.output.innerHTML = '<div class="codepeer-error">未找到题目描述或代码。</div>';
                     return;
                 }
 
                 loadingSet.add(promptType);
                 btn.classList.add('loading');
                 btn.textContent = '...';
-                elements.output.innerHTML = '<div class="codepeer-loading">Analyzing...</div>';
+                elements.output.innerHTML = '<div class="codepeer-loading">分析中...</div>';
 
                 const messages = buildMessages(promptType, problemDesc, code);
 
@@ -669,7 +669,7 @@
 
         // Store action button labels
         function getButtonLabel(type) {
-            const map = { analyze: 'Analyze Code', optimize: 'Optimize', explain: 'Explain Logic' };
+            const map = { analyze: '分析代码', optimize: '优化建议', explain: '解释思路' };
             return map[type] || '';
         }
 
