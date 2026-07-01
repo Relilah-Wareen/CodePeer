@@ -479,7 +479,7 @@
         return {
             container: container,
             panel: container.querySelector('#codepeer-panel'),
-            tab: container.querySelector('#codepeer-tab'),
+            tab: tab,
             closeBtn: container.querySelector('#codepeer-close'),
             output: container.querySelector('#codepeer-output'),
             actionButtons: container.querySelectorAll('#codepeer-actions button'),
