@@ -27,47 +27,47 @@
             id: 'deepseek',
             label: 'DeepSeek',
             baseUrl: 'https://api.deepseek.com',
-            defaultModel: 'deepseek-chat',
+            defaultModel: 'deepseek-v4-flash',
             apiKeyPlaceholder: 'sk-...',
             models: [
-                { label: 'DeepSeek Chat', value: 'deepseek-chat', recommended: true },
-                { label: 'DeepSeek Reasoner', value: 'deepseek-reasoner' }
+                { label: 'DeepSeek V4 Flash', value: 'deepseek-v4-flash', recommended: true },
+                { label: 'DeepSeek V4 Pro', value: 'deepseek-v4-pro' }
             ]
         },
         {
             id: 'openai',
             label: 'OpenAI',
             baseUrl: 'https://api.openai.com/v1',
-            defaultModel: 'gpt-4o-mini',
+            defaultModel: 'gpt-5.4-mini',
             apiKeyPlaceholder: 'sk-...',
             models: [
-                { label: 'GPT-4o Mini', value: 'gpt-4o-mini', recommended: true },
-                { label: 'GPT-4o', value: 'gpt-4o' },
-                { label: 'GPT-4.1', value: 'gpt-4.1' }
+                { label: 'GPT-5.4 Mini', value: 'gpt-5.4-mini', recommended: true },
+                { label: 'GPT-5.5', value: 'gpt-5.5' },
+                { label: 'GPT-5.4', value: 'gpt-5.4' }
             ]
         },
         {
             id: 'dashscope',
             label: 'Qwen (DashScope)',
             baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-            defaultModel: 'qwen-plus',
+            defaultModel: 'qwen3.6-flash',
             apiKeyPlaceholder: 'sk-...',
             models: [
-                { label: 'Qwen Plus', value: 'qwen-plus', recommended: true },
-                { label: 'Qwen Max', value: 'qwen-max' },
-                { label: 'Qwen Turbo', value: 'qwen-turbo' }
+                { label: 'Qwen3.6 Flash', value: 'qwen3.6-flash', recommended: true },
+                { label: 'Qwen3.6 Plus', value: 'qwen3.6-plus' },
+                { label: 'Qwen3.6 Max', value: 'qwen3.6-max-preview' }
             ]
         },
         {
             id: 'zhipu',
             label: 'Zhipu (GLM)',
             baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-            defaultModel: 'glm-4-flash',
+            defaultModel: 'glm-5.1',
             apiKeyPlaceholder: '填写智谱 API Key',
             models: [
-                { label: 'GLM-4 Flash', value: 'glm-4-flash', recommended: true },
-                { label: 'GLM-4', value: 'glm-4' },
-                { label: 'GLM-4 Plus', value: 'glm-4-plus' }
+                { label: 'GLM-5.1', value: 'glm-5.1', recommended: true },
+                { label: 'GLM-5', value: 'glm-5' },
+                { label: 'GLM-4.6 Flash', value: 'glm-4.6-flash' }
             ]
         },
         {
@@ -94,7 +94,7 @@
         provider: 'deepseek',
         apiKey: '',
         baseUrl: 'https://api.deepseek.com',
-        model: 'deepseek-chat',
+        model: 'deepseek-v4-flash',
         temperature: 0.3,
         maxTokens: 2048
     };
@@ -304,13 +304,15 @@
         const existing = document.getElementById('codepeer-sidebar');
         if (existing) existing.remove();
 
-        // --- Container ---
+        // --- Tab (independent fixed element at right edge) ---
+        const tab = document.createElement('div');
+        tab.id = 'codepeer-tab';
+        tab.innerHTML = '<span>A</span><span>I</span>';
+
+        // --- Panel container ---
         const container = document.createElement('div');
         container.id = 'codepeer-sidebar';
         container.innerHTML = `
-            <div id="codepeer-tab">
-                <span>A</span><span>I</span>
-            </div>
             <div id="codepeer-panel">
                 <div id="codepeer-header">
                     <span>CodePeer</span>
@@ -348,17 +350,10 @@
         // Inject styles
         const style = document.createElement('style');
         style.textContent = `
-            #codepeer-sidebar {
-                position: fixed; top: 0; right: 0; height: 100vh; z-index: 99999;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                font-size: 13px; display: flex; flex-direction: row-reverse;
-                pointer-events: none;
-            }
-            #codepeer-sidebar * { box-sizing: border-box; pointer-events: auto; }
-
             #codepeer-tab {
-                width: 32px; height: 64px; position: absolute; left: -32px; top: 50%;
-                transform: translateY(-50%);
+                position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+                z-index: 99998;
+                width: 32px; height: 64px;
                 background: ${C.accent}; color: #fff; border-radius: 8px 0 0 8px;
                 display: flex; flex-direction: column; align-items: center;
                 justify-content: center; cursor: pointer; font-weight: 700;
@@ -366,6 +361,16 @@
                 transition: opacity 0.2s; opacity: 0.85;
             }
             #codepeer-tab:hover { opacity: 1; }
+            #codepeer-sidebar.open ~ #codepeer-tab,
+            body.codepeer-open #codepeer-tab { opacity: 0; pointer-events: none; }
+
+            #codepeer-sidebar {
+                position: fixed; top: 0; right: 0; height: 100vh; z-index: 99999;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 13px;
+                pointer-events: none;
+            }
+            #codepeer-sidebar * { box-sizing: border-box; pointer-events: auto; }
 
             #codepeer-panel {
                 width: 400px; height: 100vh; background: ${C.bg}; border-left: 1px solid ${C.border};
@@ -373,7 +378,6 @@
                 transform: translateX(400px); transition: transform 0.25s ease;
             }
             #codepeer-sidebar.open #codepeer-panel { transform: translateX(0); }
-            #codepeer-sidebar.open #codepeer-tab { opacity: 0; pointer-events: none; }
 
             #codepeer-header {
                 display: flex; justify-content: space-between; align-items: center;
@@ -468,6 +472,7 @@
 
         document.head.appendChild(style);
         document.body.appendChild(container);
+        document.body.appendChild(tab);
 
         return {
             container: container,
@@ -491,9 +496,9 @@
     // ============================================================
 
     const PROMPTS = {
-        analyze: 'You are a LeetCode algorithm coach. Analyze the code below:\n\n1. What approach does it use? (briefly)\n2. Time and space complexity\n3. Edge cases handled / missed\n4. 1-2 concrete improvement suggestions\n\nKeep it concise, under 200 words. Use Chinese if the problem is in Chinese.',
-        optimize: 'You are a performance-focused code reviewer. Suggest optimizations for this solution:\n\n1. Can time or space complexity be improved?\n2. Are there redundant operations?\n3. Show the optimized version (key changes only)\n\nBe specific, reference line numbers if visible. Under 250 words.',
-        explain: 'You are a patient algorithm tutor. Explain the solution logic step by step:\n\n1. What is the core idea? (1 sentence)\n2. Walk through the algorithm in plain language\n3. Explain WHY this works (not just what it does)\n\nUse an example to illustrate. Under 300 words.',
+        analyze: '你是一位算法教练。请先判断当前代码是否正确，然后进行分析。\n\n1. 代码是否正确？如果错误，指出具体的问题和修复方法\n2. 算法思路简介\n3. 时间复杂度和空间复杂度\n4. 边界条件覆盖情况\n5. 1-2 条具体优化建议\n\n用中文回答，简洁清晰，控制在 300 字以内。',
+        optimize: '你是一位性能优化专家。先判断代码正确性，再给出优化方案。\n\n1. 当前代码是否正确？有 bug 请先指出\n2. 时间或空间复杂度能否改进？\n3. 是否有冗余操作？\n4. 给出优化后的关键改动（附代码片段）\n\n用中文，控制在 300 字以内。',
+        explain: '你是一位耐心的算法导师。先确认代码是否正确，再讲解思路。\n\n1. 代码是否通过？（如有问题请先纠正）\n2. 核心思路用一句话概括\n3. 逐步讲解算法流程\n4. 为什么这样做是对的（而不只是做了什么）\n\n用中文，举个简单例子说明，控制在 350 字以内。',
     };
 
     function buildMessages(promptType, problemDesc, code) {
@@ -588,11 +593,13 @@
         // --- Tab click ---
         elements.tab.addEventListener('click', () => {
             elements.container.classList.add('open');
+            document.body.classList.add('codepeer-open');
         });
 
         // --- Close button ---
         elements.closeBtn.addEventListener('click', () => {
             elements.container.classList.remove('open');
+            document.body.classList.remove('codepeer-open');
         });
 
         // --- 设置 ---
